@@ -1,0 +1,1 @@
+# Estimating-replicability-of-Polish-psychology
