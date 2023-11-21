@@ -7,7 +7,7 @@ The aim of this project is to create a database for further meta-scientific rese
 
 **Associated works:**
 
-[Preregistration: Looking for evidence that publish-or-perish reinforces publication bias and gamification of publishing strategy](https://osf.io/jgrbf)
+* [Preregistration: Looking for evidence that publish-or-perish reinforces publication bias and gamification of publishing strategy](https://osf.io/jgrbf)
 
 **Brief description:**
 
@@ -18,10 +18,10 @@ In the next step, we are estimating publication bias in experimental using Z-cur
 
 **See also:**
 
-[Script of data processing](./wikifiles/Script_of_data_processing.md)
-[Limitations](./wikifiles/Limitations.md)
-[Contribution of each author](./wikifiles/Contribution.md)
-[Data coverage and versioning](./wikifiles/Data_coverage.md)
+* [Script of data processing](./wikifiles/Script_of_data_processing.md)
+* [Limitations](./wikifiles/Limitations.md)
+* [Contribution of each author](./wikifiles/Contribution.md)
+* [Data coverage and versioning](./wikifiles/Data_coverage.md)
 
 Ref:
  * Bartoš, F., & Schimmack, U. (2022). Z-curve 2.0: Estimating replication rates and discovery rates. Meta-Psychology, 6.
