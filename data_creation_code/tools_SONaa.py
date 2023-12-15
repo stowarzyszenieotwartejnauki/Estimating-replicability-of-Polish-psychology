@@ -1,3 +1,6 @@
+import re
+
+
 ## Function and it's revers for make short version of DOI
 def short_DOI(DOI):
     try:
@@ -32,3 +35,14 @@ def open_SONaa(file):
     json_file = open(file, encoding="utf8")
     List_of_articles = json.load(json_file)
     return(List_of_articles)
+
+
+
+# clean_date
+def clean_date(date):
+    if date == 'unrecovered': return(date)
+    elif len(date) == 4: return(date)
+    else:
+        s = re.split('-|/',date)
+    s = [item for item in s if len(item)==4]
+    return(s[0])

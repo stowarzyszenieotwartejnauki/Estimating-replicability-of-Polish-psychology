@@ -3,6 +3,8 @@ import os
 import json
 from tools_SONaa import *
 from glob import glob
+from tqdm import tqdm
+
 
 # to do
 # add other information to authors_export
@@ -100,13 +102,12 @@ def import_orcid_article_list(source = "../data/publications/orcid", save_as_csv
     return(df)
 
 
-def update_SONaa(raw_article_list = 'raw_article_list.csv', 
+def update_SONaa(raw_article_list = '../data/raw_article_list.csv', 
                  existing_SONaa = "../main_dataset\List_of_articles.SONaa", 
                  save_duplicated_to_csv = False, 
-                 dest = '../main_dataset'):
+                 dest = ''):
 
-    if isinstance(raw_article_list, str):
-        raw_article_list = pd.read_csv(raw_article_list)
+    raw_article_list = pd.read_csv(raw_article_list)
 
     try:
         SONaa = open_SONaa(existing_SONaa)
@@ -116,23 +117,23 @@ def update_SONaa(raw_article_list = 'raw_article_list.csv',
         
     duplicated = []
 
-    for i, row in raw_article_list.iterrows():
+    for i, row in tqdm(raw_article_list.iterrows()):
         if row['Article_ID'] in SONaa.keys():
-            if row['name'] in SONaa[row['Article_ID']]['authors']:
+            if (row["name"], row['author_id']) in SONaa[row['Article_ID']]['authors']:
                 duplicated += [row]
             else:
-                SONaa[row['Article_ID']]['authors'] += [row['name']]
+                SONaa[row['Article_ID']]['authors'] += [row['author_id']]
 
         else:
             article = {
-                'authors': [row["name"]],
+                'authors': [row['author_id']],
                 'title': row["title"],
                 'doi': row["doi"],
-                'date': row['date']}
+                'date': clean_date(row['date'])}
 
             SONaa.update({row['Article_ID']: article})
     
-    destination = dest + '/List_of_articles.SONaa'
+    destination = dest + 'List_of_articles.SONaa'
     with open(destination, 'w', encoding='utf-8') as f:
         json.dump(SONaa, f, ensure_ascii=False, indent=4)
     # create DF with articles' properties
