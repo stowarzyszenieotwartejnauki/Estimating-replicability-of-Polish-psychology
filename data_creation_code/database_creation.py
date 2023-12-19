@@ -5,7 +5,6 @@ from tools_SONaa import *
 from glob import glob
 from tqdm import tqdm
 
-
 # to do
 # add other information to authors_export
 
@@ -102,7 +101,7 @@ def import_orcid_article_list(source = "../data/publications/orcid", save_as_csv
     return(df)
 
 
-def update_SONaa(raw_article_list = '../data/raw_article_list.csv', 
+def update_SONaa_Orcid(raw_article_list = '../data/Orcid_raw_article_list.csv', 
                  existing_SONaa = "../main_dataset\List_of_articles.SONaa", 
                  save_duplicated_to_csv = False, 
                  dest = ''):
