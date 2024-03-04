@@ -9,7 +9,7 @@ from tqdm import tqdm
 # add other information to authors_export
 
 ## this part is alternative to wrangle_scientists.py ##
-def author_export(source = '../data/scientists.csv', dest = '../main_dataset'):
+def author_export(source = '../data/scientists.csv', save = False, dest = '../main_dataset'):
     
     df = pd.read_csv(source)
     
@@ -64,9 +64,12 @@ def author_export(source = '../data/scientists.csv', dest = '../main_dataset'):
         author['fullname'] = names[0]
 
         authors = pd.concat([authors,author.to_frame().T])
-                
-    authors.to_csv(dest+"/List_of_authors.csv", index=False)
-
+        
+        fn = authors['fullname'].to_list()
+        Aid = [create_Auhor_ID(fullname) for fullname in fn]
+        authors['Aid'] = Aid
+    if save: authors.to_csv(dest+"/List_of_authors2.csv", index=False)
+    return authors
 
 # import orcid's article list
 def import_orcid_article_list(source = "../data/publications/orcid", save_as_csv = False):
@@ -86,10 +89,10 @@ def import_orcid_article_list(source = "../data/publications/orcid", save_as_csv
 
     Article_ID = []
     for i, row in (df.iterrows()):
-        y = create_Article_ID(row)
+        y = create_Article_ID(row, DOI='link')
         Article_ID += [y]
 
-    df.rename(columns = {'id':'filename', 'link':'doi'}, inplace = True)
+    df.rename(columns = {'link':'doi'}, inplace = True)
     df['Article_ID'] = Article_ID
 
     if save_as_csv == True:
@@ -112,6 +115,7 @@ def update_SONaa_Orcid(raw_article_list = '../data/Orcid_raw_article_list.csv',
         SONaa = open_SONaa(existing_SONaa)
     except:
         SONaa = {}
+        print(existing_SONaa, ' not found, new file created')
         
         
     duplicated = []
@@ -135,8 +139,14 @@ def update_SONaa_Orcid(raw_article_list = '../data/Orcid_raw_article_list.csv',
     destination = dest + 'List_of_articles.SONaa'
     with open(destination, 'w', encoding='utf-8') as f:
         json.dump(SONaa, f, ensure_ascii=False, indent=4)
+
     # create DF with articles' properties
     if save_duplicated_to_csv:
         duplicated = pd.DataFrame(duplicated)
         duplicated.to_csv('duplicated_SONaa.csv', index=False)
 
+def manage_pbn():
+    return 'test'
+
+# x = import_orcid_article_list()
+# x.to_csv('New_ID_Orcid_raw_article_list.csv')

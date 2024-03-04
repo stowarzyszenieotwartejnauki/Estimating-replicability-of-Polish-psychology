@@ -2,20 +2,29 @@ import re
 
 
 ## Function and it's revers for make short version of DOI
-def short_DOI(DOI):
-    try:
-        x = DOI.split("org/")[1]
-        x = x.replace('.', '-')
-        x = x.replace('/', '_')
-        return(x)
-    except:
-        print("__hjuston, mamy problem"+DOI)
-        return("__hjuston, mamy problem"+DOI)
+def short_DOI(DOI, ID= True):
+    """_summary_
+    Args:
+        DOI (string): string which is DOI in format both 'DOI:' and hyperlink.
+        ID (bool, optional): True if shortened string should be returned in "ID format" with replaced characters. Defaults to True.
+    """
+    x = DOI.split("org/")[-1]
+    if ID:
+        x = x.replace('.', '_')
+        x = x.replace('/', '&')
+    return(x)
 
-def long_DOI(DOI):
-    x = DOI.replace('-', ',')
-    x = DOI.replace('_', '/')
-    x = 'https://doi.org/' + x
+def long_DOI(DOI, hyperlink = True):
+    """_summary_
+
+    Args:
+        DOI (_type_): short version of DOI or ID
+        hyperlink (bool, optional): Should be added "https://doi.org/" before string?. Defaults to True.
+    """
+    x = DOI.replace('_', '.')
+    x = x.replace('&', '/')
+    if hyperlink:
+        x = 'https://doi.org/' + x
     return(x)
 
 # Create ID
@@ -29,7 +38,6 @@ def create_Article_ID(rowOrDOI, DOI = "doi", title = "title", joural = 'journal'
         if old:
             t_old = rowOrDOI[title]+str(rowOrDOI[joural])
             return(hash(t_old))
-        
         
         
         else:
@@ -61,6 +69,13 @@ def create_Article_ID(rowOrDOI, DOI = "doi", title = "title", joural = 'journal'
             
             return ''.join(t_new)
   
+def create_Auhor_ID(fullname):
+    import random
+    chars = ('abcdefghijklmnoprstuwxyz1234567890ABCDEFGHIJKLMNOPRSTUWXYZ')
+    x = fullname.replace(" ", "_")
+    y = "".join(random.sample(chars,3))
+    return(x+"_"+y)
+
 
 def open_SONaa(file):
     import json
@@ -78,11 +93,48 @@ def clean_date(date):
     s = [item for item in s if len(item)==4]
     return(s[0])
 
-import pandas as pd
-raw_article_list = '../data/Orcid_raw_article_list.csv'
-raw_article_list = pd.read_csv(raw_article_list)
 
-new_id = []
-for i, row in raw_article_list.iterrows():
-    new_id.append(create_Article_ID(row))
+def update_SONaa_Orcid(raw_article_list, 
+                 existing_SONaa = "../main_dataset\List_of_articles.SONaa", 
+                 save_duplicated_to_csv = False, 
+                 dest = ''):
+
+
+    import pandas as pd
+    if isinstance(raw_article_list, str): 
+        raw_article_list = pd.read_csv(raw_article_list)
+
+    try:
+        SONaa = open_SONaa(existing_SONaa)
+    except:
+        SONaa = {}
+        print(existing_SONaa, ' not found, new file created')
+        
+        
+    duplicated = []
+
+    for i, row in tqdm(raw_article_list.iterrows()):
+        if row['Article_ID'] in SONaa.keys():
+            if (row["name"], row['author_id']) in SONaa[row['Article_ID']]['authors']:
+                duplicated += [row]
+            else:
+                SONaa[row['Article_ID']]['authors'] += [row['author_id']]
+
+        else:
+            article = {
+                'authors': [row['author_id']],
+                'title': row["title"],
+                'doi': row["doi"],
+                'date': clean_date(row['date'])}
+
+            SONaa.update({row['Article_ID']: article})
     
+    destination = dest + 'List_of_articles.SONaa'
+    import json
+    with open(destination, 'w', encoding='utf-8') as f:
+        json.dump(SONaa, f, ensure_ascii=False, indent=4)
+
+    # create DF with articles' properties
+    if save_duplicated_to_csv:
+        duplicated = pd.DataFrame(duplicated)
+        duplicated.to_csv('duplicated_SONaa.csv', index=False)
