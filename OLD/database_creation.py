@@ -68,7 +68,7 @@ def author_export(source = '../data/scientists.csv', save = False, dest = '../ma
         fn = authors['fullname'].to_list()
         Aid = [create_Auhor_ID(fullname) for fullname in fn]
         authors['Aid'] = Aid
-    if save: authors.to_csv(dest+"/List_of_authors2.csv", index=False)
+    if save: authors.to_csv(dest+"/List_of_authors.csv", index=False)
     return authors
 
 # import orcid's article list
@@ -103,9 +103,8 @@ def import_orcid_article_list(source = "../data/publications/orcid", save_as_csv
 
     return(df)
 
-
 def update_SONaa_Orcid(raw_article_list = '../data/Orcid_raw_article_list.csv', 
-                 existing_SONaa = "../main_dataset\List_of_articles.SONaa", 
+                 existing_SONaa = "../main_dataset/List_of_articles.SONaa", 
                  save_duplicated_to_csv = False, 
                  dest = ''):
 

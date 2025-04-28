@@ -1,6 +1,4 @@
-
-
-##### Creating author - paper database:
+##### Creating author - paper database from ORCID:
 
 * [data/scientists.csv](../data/scientists.csv) is file downloaded with filter "dispcipline = psychologia" from [radon database](https://radon.nauka.gov.pl/dane/nauczyciele-akademiccy-badacze-i-osoby-zaangazowane-w-dzialalnosc-naukowa)
   Registration in that database is obligatory for all active scientists who work within Polish system of higher education, regulated by law. See [limitations](Limitations.md).
